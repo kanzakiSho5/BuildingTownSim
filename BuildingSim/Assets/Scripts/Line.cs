@@ -26,6 +26,8 @@ public class Line : MonoBehaviour
 
     private void OnChangePositionHandler()
     {
+        Transform loadBone = transform.GetChild(0);
+        Vector3 tmpPos = new Vector3();
         
         string str = "";
         for (int i = 0; i < detail; i++)
@@ -33,6 +35,17 @@ public class Line : MonoBehaviour
             Vector3 pos = BezierPoint(startNode.position, endNode.position, handlePos, 1 / (float)detail * i);
             str += pos + ", ";
             lineNodePosition[i] = pos;
+            // 最初以外のbone
+            if (i != 0)
+            {
+                float rad = Mathf.Atan2(lineNodePosition[i - 1].z - lineNodePosition[i].z,
+                    lineNodePosition[i - 1].x - lineNodePosition[i].x);
+                float deg = Mathf.Rad2Deg * rad;
+                loadBone.parent.eulerAngles = Vector3.down * deg;
+            }
+            loadBone.position = pos;
+            loadBone = loadBone.GetChild(0);
+            tmpPos = pos;
         }
         Debug.Log(str);
     }

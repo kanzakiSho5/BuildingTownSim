@@ -26,7 +26,12 @@ public class Node : MonoBehaviour
 
     public Vector3 position
     {
-        get { return transform.position; }
+        get
+        {
+            Vector3 position = transform.position;
+            position.y += .1f;
+            return position;
+        }
     }
     
     public bool isActive

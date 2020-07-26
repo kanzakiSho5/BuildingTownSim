@@ -39,6 +39,7 @@ public class NodesManager : MonoBehaviour
             if (node.isActive)
             {
                 selectNode = node;
+                NodeCreator.Instance.isOnCreate = true;
                 return;
             }
         }
@@ -50,15 +51,21 @@ public class NodesManager : MonoBehaviour
         {
             node.OnActive(active);
         }
+
+        if (!active)
+        {
+            NodeCreator.Instance.isOnCreate = false;
+        }
     }
 
     public void OnCreatedNode(Node createdNode)
     {
         
         Nodes.Add(createdNode);
+        // 道がつくれるとき
         if (ActiveNode || Nodes.Count > 1)
         {
-            LineCreator.Instance.OnCreateLoad(createdNode);
+            LineCreator.Instance.OnCreateLoad(ActiveNode, createdNode);
             AllNodeOnActive(false);
         }
 

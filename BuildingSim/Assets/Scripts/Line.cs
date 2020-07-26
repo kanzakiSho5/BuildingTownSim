@@ -23,6 +23,17 @@ public class Line : MonoBehaviour
         endNode.OnChangePosition += OnChangePositionHandler;
         lineNodePosition = new Vector3[detail];
     }
+    
+    public void SetNode(Node start, Node end, Vector3 handlePos)
+    {
+        Debug.Log(startNode);
+        startNode = start;
+        endNode = end;
+        this.handlePos = handlePos;
+        startNode.OnChangePosition += OnChangePositionHandler;
+        endNode.OnChangePosition += OnChangePositionHandler;
+        lineNodePosition = new Vector3[detail];
+    }
 
     private void OnChangePositionHandler()
     {
@@ -58,6 +69,9 @@ public class Line : MonoBehaviour
         {
             Gizmos.DrawSphere(nodePos,0.2f);
         }
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(handlePos, .2f);
     }
 
     private Vector3 BezierPoint(Vector3 startPos, Vector3 endPos, Vector3 handle, float t)

@@ -6,6 +6,7 @@ using UnityEngine;
 public class NodeCreator : MonoBehaviour
 {
     [SerializeField] private GameObject NodeObj;
+    public bool isOnCreate = false;
 
     public static NodeCreator Instance { get; private set; }
     
@@ -13,7 +14,7 @@ public class NodeCreator : MonoBehaviour
     {
         if (!Instance) Instance = this;
     }
-
+    
     public void CreateNode(Vector3 position)
     {
         if(GameManager.Instance.CullentCreateType != CreateType.CreateLoad) return;

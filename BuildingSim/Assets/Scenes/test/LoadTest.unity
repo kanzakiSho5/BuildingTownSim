@@ -1006,7 +1006,7 @@ MonoBehaviour:
   CullentCreateType: 0
   isOnCreate: 0
   SelectorPos: {x: 0, y: 0, z: 0}
-  Selector: {fileID: 0}
+  Selector: {fileID: 1258120259}
 --- !u!1 &1258120259
 GameObject:
   m_ObjectHideFlags: 0

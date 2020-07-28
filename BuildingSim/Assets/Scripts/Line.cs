@@ -12,6 +12,7 @@ public class Line : MonoBehaviour
     private Vector3[] lineNodePosition;
 
     [SerializeField] private int detail = 10;
+    [SerializeField] private float loadLength;
     
     public void SetNode(Node start, Node end)
     {
@@ -32,13 +33,13 @@ public class Line : MonoBehaviour
         this.handlePos = handlePos;
         startNode.OnChangePosition += OnChangePositionHandler;
         endNode.OnChangePosition += OnChangePositionHandler;
+        
         lineNodePosition = new Vector3[detail];
     }
 
     private void OnChangePositionHandler()
     {
         Transform loadBone = transform.GetChild(0);
-        Vector3 tmpPos = new Vector3();
         
         string str = "";
         for (int i = 0; i < detail; i++)
@@ -55,8 +56,14 @@ public class Line : MonoBehaviour
                 loadBone.parent.eulerAngles = Vector3.down * deg;
             }
             loadBone.position = pos;
+
+            if (i == detail - 1)
+            {
+                startNode.AddLine(new lineInfo(transform.GetChild(0).position, loadLength));
+                endNode.AddLine(new lineInfo(loadBone.position, loadLength));
+            }
+            
             loadBone = loadBone.GetChild(0);
-            tmpPos = pos;
         }
         Debug.Log(str);
     }

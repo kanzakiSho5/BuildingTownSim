@@ -34,6 +34,11 @@ public class LineCreator : MonoBehaviour
         
     }
 
+    public void OnChangeHandlePos()
+    {
+        handlePos = Vector3.zero;
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawRay(lastHandlePos, handlePos - lastHandlePos);

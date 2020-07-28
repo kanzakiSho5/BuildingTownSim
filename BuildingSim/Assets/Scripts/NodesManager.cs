@@ -75,3 +75,22 @@ public class NodesManager : MonoBehaviour
     }
     
 }
+
+public class lineInfo
+{
+    public Vector3 position;
+    public float lineLength;
+    public int? lineCount;
+
+    public lineInfo(Vector3 position, float lineLength)
+    {
+        this.position = position;
+        this.lineLength = lineLength;
+        lineCount = null;
+    }
+
+    public void ChangeCount(int count)
+    {
+        lineCount = count;
+    }
+}

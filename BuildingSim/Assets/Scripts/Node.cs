@@ -8,21 +8,9 @@ public class Node : MonoBehaviour
 {
     public delegate void OnChangePositionDelegate();
     public event OnChangePositionDelegate OnChangePosition;
-
-    
     
     Vector3 temp;
-    public void Update()
-    {
-        
-        if (temp != position)
-        {
-            if(OnChangePosition != null)
-                OnChangePosition();
-        }
-
-        temp = position;
-    }
+    private List<lineInfo> conectLineInfo = new List<lineInfo>();
 
     public Vector3 position
     {
@@ -39,11 +27,42 @@ public class Node : MonoBehaviour
         get;
         private set;
     }
+    
+    public void Update()
+    {
+        
+        if (temp != position)
+        {
+            // TODO: 動かしてない側のconectLineInfoの初期化
+            conectLineInfo = new List<lineInfo>();
+            if(OnChangePosition != null)
+                OnChangePosition();
+        }
+
+        temp = position;
+    }
+
+    public void AddLine(lineInfo info)
+    {
+        
+        Debug.Log(info.position);
+        if (info.lineCount == null)
+        {
+            info.ChangeCount(conectLineInfo.Count);
+            conectLineInfo.Add(info);
+        }
+        else
+        {
+            conectLineInfo[(int)info.lineCount] = info;
+        }
+
+    }
 
     public void OnClick()
     {
         NodesManager.Instance.AllNodeOnActive(false);
         OnActive(true);
+        LineCreator.Instance.OnChangeHandlePos();
     }
 
     public void OnActive(bool active)
@@ -64,5 +83,11 @@ public class Node : MonoBehaviour
         Gizmos.color = Color.gray;
         if(isActive) Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(pos, .5f);
+        Gizmos.color = Color.green;
+        for (int i = 0; i < conectLineInfo.Count; i++)
+        {
+            Debug.Log(conectLineInfo[i].position +", "+ transform.position);
+            Gizmos.DrawLine(transform.position, conectLineInfo[i].position);
+        }
     }
 }

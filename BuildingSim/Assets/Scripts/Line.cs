@@ -6,7 +6,9 @@ using UnityEngine;
 public class Line : MonoBehaviour
 {
     private Node startNode;
+    private int? startNodeNumber;
     private Node endNode;
+    private int? endNodeNumber;
     private Vector3 handlePos;
 
     private Vector3[] lineNodePosition;
@@ -59,8 +61,15 @@ public class Line : MonoBehaviour
 
             if (i == detail - 1)
             {
-                startNode.AddLine(new lineInfo(transform.GetChild(0).position, loadLength));
-                endNode.AddLine(new lineInfo(loadBone.position, loadLength));
+                if(startNodeNumber == null)
+                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0).GetChild(0).position, loadLength));
+                else
+                    startNode.ChangeLine(new lineInfo(transform.GetChild(0).GetChild(0).position, loadLength, startNodeNumber));
+                
+                if(endNodeNumber == null)
+                    endNodeNumber = endNode.AddLine(new lineInfo(loadBone.position, loadLength));
+                else
+                    endNode.ChangeLine(new lineInfo(loadBone.position, loadLength, endNodeNumber));
             }
             
             loadBone = loadBone.GetChild(0);

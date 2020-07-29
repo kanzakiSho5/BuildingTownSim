@@ -33,8 +33,6 @@ public class Node : MonoBehaviour
         
         if (temp != position)
         {
-            // TODO: 動かしてない側のconectLineInfoの初期化
-            conectLineInfo = new List<lineInfo>();
             if(OnChangePosition != null)
                 OnChangePosition();
         }
@@ -42,20 +40,17 @@ public class Node : MonoBehaviour
         temp = position;
     }
 
-    public void AddLine(lineInfo info)
+    public int AddLine(lineInfo info)
     {
-        
         Debug.Log(info.position);
-        if (info.lineCount == null)
-        {
-            info.ChangeCount(conectLineInfo.Count);
-            conectLineInfo.Add(info);
-        }
-        else
-        {
-            conectLineInfo[(int)info.lineCount] = info;
-        }
+        info.ChangeCount(conectLineInfo.Count);
+        conectLineInfo.Add(info);
+        return (int)info.lineCount;
+    }
 
+    public void ChangeLine(lineInfo info)
+    {
+        conectLineInfo[(int)info.lineCount] = info;
     }
 
     public void OnClick()

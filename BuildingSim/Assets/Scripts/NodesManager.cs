@@ -89,6 +89,13 @@ public class lineInfo
         lineCount = null;
     }
 
+    public lineInfo(Vector3 position, float lineLength, int? lineCount)
+    {
+        this.position = position;
+        this.lineLength = lineLength;
+        this.lineCount = lineCount;
+    }
+
     public void ChangeCount(int count)
     {
         lineCount = count;

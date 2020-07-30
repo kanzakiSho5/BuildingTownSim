@@ -7,15 +7,17 @@ using UnityEngine.EventSystems;
 public class GroundEventSystem : MonoBehaviour, IPointerClickHandler,IDragHandler
 {
     private bool isClicked = false;
-    
+
     public void OnPointerClick(PointerEventData eventData)
     {
+        
         switch (GameManager.Instance.CullentCreateType)
         {
             case CreateType.Move:
                 break;
             case CreateType.CreateLoad:
-                NodeCreator.Instance.CreateNode(eventData.pointerPressRaycast.worldPosition);
+                if(eventData.pointerId == -1) // 左クリック
+                    NodeCreator.Instance.CreateNode(eventData.pointerPressRaycast.worldPosition);
                 break;
         }
         

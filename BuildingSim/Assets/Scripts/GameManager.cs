@@ -18,6 +18,27 @@ public class GameManager : MonoBehaviour
     public CreateType CullentCreateType;
     public bool isOnCreate = false;
     public Vector3 SelectorPos;
+    public Vector3 CursorPos
+    {
+        get
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray,200f);
+
+            foreach (var hit in hits)
+            {
+                //Debug.Log(hit.collider.tag);
+                if (hit.collider.tag == "ground")
+                {
+                    Vector3 pos = hit.point;
+                    pos.y += .1f;
+                    return pos;
+                }
+            }
+
+            return Vector3.zero;
+        }
+    }
     
     [SerializeField]
     private GameObject Selector;
@@ -29,21 +50,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (isOnCreate)
+        //if (isOnCreate)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray,200f);
-
-            foreach (var hit in hits)
-            {
-                Debug.Log(hit.collider.tag);
-                if (hit.collider.tag == "ground")
-                {
-                    Vector3 pos = hit.point;
-                    pos.y += .1f;
-                    Selector.transform.position = pos;
-                }
-            }
+            Selector.transform.position = CursorPos;
         }
     }
 

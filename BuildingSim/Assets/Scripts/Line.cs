@@ -29,7 +29,7 @@ public class Line : MonoBehaviour
     
     public void SetNode(Node start, Node end, Vector3 handlePos)
     {
-        Debug.Log(startNode);
+        // Debug.Log(startNode);
         startNode = start;
         endNode = end;
         this.handlePos = handlePos;
@@ -74,7 +74,7 @@ public class Line : MonoBehaviour
             
             loadBone = loadBone.GetChild(0);
         }
-        Debug.Log(str);
+        // Debug.Log(str);
     }
 
     private void OnDrawGizmos()

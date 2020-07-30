@@ -18,7 +18,7 @@ public class NodeCreator : MonoBehaviour
     public void CreateNode(Vector3 position)
     {
         if(GameManager.Instance.CullentCreateType != CreateType.CreateLoad) return;
-        Debug.Log(position);
+        // Debug.Log(position);
         GameObject node = Instantiate(NodeObj, position, Quaternion.identity);
         NodesManager.Instance.OnCreatedNode(node.GetComponent<Node>());
         

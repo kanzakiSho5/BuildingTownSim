@@ -42,7 +42,7 @@ public class Node : MonoBehaviour
 
     public int AddLine(lineInfo info)
     {
-        Debug.Log(info.position);
+        // Debug.Log(info.position);
         info.ChangeCount(conectLineInfo.Count);
         conectLineInfo.Add(info);
         return (int)info.lineCount;
@@ -69,7 +69,7 @@ public class Node : MonoBehaviour
     public void Move(Vector3 pos)
     {
         transform.position = pos;
-        Debug.Log(pos);
+        // Debug.Log(pos);
     }
 
     private void OnDrawGizmos()
@@ -81,7 +81,7 @@ public class Node : MonoBehaviour
         Gizmos.color = Color.green;
         for (int i = 0; i < conectLineInfo.Count; i++)
         {
-            Debug.Log(conectLineInfo[i].position +", "+ transform.position);
+            // Debug.Log(conectLineInfo[i].position +", "+ transform.position);
             Gizmos.DrawLine(transform.position, conectLineInfo[i].position);
         }
     }

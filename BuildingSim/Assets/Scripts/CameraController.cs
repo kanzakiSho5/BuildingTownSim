@@ -18,6 +18,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float rotateSpeed;
     [SerializeField] private MouseButtonType rotateMouseKey = MouseButtonType.wheel;
     [SerializeField] private MouseButtonType moveMouseKey = MouseButtonType.right;
+    [SerializeField] private Transform cameraRoot;
 
     private Vector2 firstCursorPosition = Vector2.zero;
     private Camera camera;
@@ -64,7 +65,7 @@ public class CameraController : MonoBehaviour
         float h = mousePosition.x - firstCursorPosition.x;
         // Debug.LogFormat("\nMouseMove: x:{0} y:{1} \nCursorPos: x:{2} y:{3}\nfirstpos: x:{4} y:{5}", h, v,mousePosition.x,mousePosition.y,firstCursorPosition.x,firstCursorPosition.y);
 
-        transform.position += (transform.right * h + transform.up * v) * Time.deltaTime * moveSpeed;
+        cameraRoot.position += (transform.right * h + transform.up * v) * Time.deltaTime * moveSpeed;
     }
 
     private void Rotate()
@@ -72,6 +73,7 @@ public class CameraController : MonoBehaviour
         float v = Input.GetAxis("Mouse X") * rotateSpeed;
         float h = Input.GetAxis("Mouse Y") * rotateSpeed;
         
-        transform.rotation *= Quaternion.Euler(h, v, 0);
+        
+        cameraRoot.localEulerAngles += new Vector3(h, v, 0);
     }
 }

@@ -22,9 +22,6 @@ public class LineCreator : MonoBehaviour
 
     public void OnCreateLoad(Node startNode, Node endNode)
     {
-        lastHandlePos = handlePos;
-        GameObject obj = Instantiate(LoadObj, endNode.position, Quaternion.identity);
-        
         // handleの位置
         if (handlePos == Vector3.zero) // 初期値
         {
@@ -37,14 +34,12 @@ public class LineCreator : MonoBehaviour
             Vector3 tmpCenterPos = endNode.position - rootCenter;
             Vector3 rotatedRootCenter = new Vector3(-tmpCenterPos.z, tmpCenterPos.y, tmpCenterPos.x) + rootCenter;
             
-            handlePos = GetIntersection(rootCenter, rotatedRootCenter, startNode.position,lastHandlePos);
+            handlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter, startNode.position,handlePos);
         }
-        obj.GetComponent<Line>().SetNode(startNode, endNode, handlePos);
-    }
-
-    public void Update()
-    {
+        GameObject obj = Instantiate(LoadObj, handlePos, Quaternion.identity);
+        Debug.Log("Create Road: "+ startNode.position +", "+ endNode.position);
         
+        obj.GetComponent<Line>().SetNode(startNode, endNode, handlePos);
     }
 
     public void OnChangeHandlePos()
@@ -55,7 +50,7 @@ public class LineCreator : MonoBehaviour
     private void OnDrawGizmos()
     {
         // 実行前エラー回避
-        if(!NodesManager.Instance.ActiveNode)
+        if(!NodesManager.Instance)
             return;
         
         // StartNodeとEndNodeをおきかえ
@@ -77,8 +72,8 @@ public class LineCreator : MonoBehaviour
         
         //Gizmos.DrawSphere(rotatedRootCenter, .5f);
 
-        Debug.Log(handleVec +", "+ endNodePos);
-        Vector3 newHandlePos = GetIntersection(rootCenter, rotatedRootCenter,endNodePos, handlePos);
+        //Debug.Log(handleVec +", "+ endNodePos);
+        Vector3 newHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,endNodePos, handlePos);
         
         Gizmos.DrawSphere(newHandlePos, .5f);
         
@@ -112,25 +107,5 @@ public class LineCreator : MonoBehaviour
         //Gizmos.DrawSphere();
         
 
-    }
-
-    private Vector3 GetIntersection(Vector3 pos1, Vector3 pos2, Vector3 pos3, Vector3 pos4)
-    {
-        /*
-            a = (p2[1] - p1[1]) / (p2[0] - p1[0])
-            b = p1[1] - a * p1[0] 
-
-            c = (p4[1] - p3[1]) / (p4[0] - p3[0])
-            d = p3[1] - c * p3[0] 
-         */
-        
-        float a = (pos2.z - pos1.z) / (pos2.x - pos1.x);
-        float b = pos1.z - a * pos1.x;
-        float c = (pos4.z - pos3.z) / (pos4.x - pos3.x);
-        float d = pos3.z - c * pos3.x;
-
-        Vector3 ret = new Vector3((d - b) / (a - c), .1f, (a * d - b * c) / (a - c));
-        Debug.Log(ret);
-        return ret;
     }
 }

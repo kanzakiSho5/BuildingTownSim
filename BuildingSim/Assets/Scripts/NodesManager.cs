@@ -78,20 +78,21 @@ public class NodesManager : MonoBehaviour
 
 public class lineInfo
 {
-    public Vector3 position;
+    public Transform bone;
+    public float direction;
     public float lineLength;
     public int? lineCount;
 
-    public lineInfo(Vector3 position, float lineLength)
+    public lineInfo(Transform bone, float lineLength)
     {
-        this.position = position;
+        this.bone = bone;
         this.lineLength = lineLength;
         lineCount = null;
     }
 
-    public lineInfo(Vector3 position, float lineLength, int? lineCount)
+    public lineInfo(Transform bone, float lineLength, int? lineCount)
     {
-        this.position = position;
+        this.bone = bone;
         this.lineLength = lineLength;
         this.lineCount = lineCount;
     }
@@ -99,5 +100,18 @@ public class lineInfo
     public void ChangeCount(int count)
     {
         lineCount = count;
+    }
+
+    public void ChangeDirection(float dir)
+    {
+        this.direction = dir;
+    }
+}
+
+public class lineInfoComparer : IComparer<lineInfo>
+{
+    public int Compare(lineInfo x, lineInfo y)
+    {
+        return x.direction.CompareTo(y.direction);
     }
 }

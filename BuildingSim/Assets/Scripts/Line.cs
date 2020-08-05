@@ -41,7 +41,7 @@ public class Line : MonoBehaviour
 
     private void OnChangePositionHandler()
     {
-        Transform loadBone = transform.GetChild(0);
+        Transform roadBone = transform.GetChild(0);
         
         string str = "";
         for (int i = 0; i < detail; i++)
@@ -55,24 +55,24 @@ public class Line : MonoBehaviour
                 float rad = Mathf.Atan2(lineNodePosition[i - 1].z - lineNodePosition[i].z,
                     lineNodePosition[i - 1].x - lineNodePosition[i].x);
                 float deg = Mathf.Rad2Deg * rad;
-                loadBone.parent.eulerAngles = Vector3.down * deg;
+                roadBone.parent.eulerAngles = Vector3.down * deg;
             }
-            loadBone.position = pos;
+            roadBone.position = pos;
 
             if (i == detail - 1)
             {
                 if(startNodeNumber == null)
-                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0).GetChild(0).position, loadLength));
+                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0), loadLength));
                 else
-                    startNode.ChangeLine(new lineInfo(transform.GetChild(0).GetChild(0).position, loadLength, startNodeNumber));
+                    startNode.ChangeLine(new lineInfo(transform.GetChild(0), loadLength, startNodeNumber));
                 
                 if(endNodeNumber == null)
-                    endNodeNumber = endNode.AddLine(new lineInfo(loadBone.position, loadLength));
+                    endNodeNumber = endNode.AddLine(new lineInfo(roadBone.GetChild(0), loadLength));
                 else
-                    endNode.ChangeLine(new lineInfo(loadBone.position, loadLength, endNodeNumber));
+                    endNode.ChangeLine(new lineInfo(roadBone.GetChild(0), loadLength, endNodeNumber));
             }
             
-            loadBone = loadBone.GetChild(0);
+            roadBone = roadBone.GetChild(0);
         }
         // Debug.Log(str);
     }

@@ -36,7 +36,7 @@ public class NodeMeshRenderer : MonoBehaviour
         };
         mesh.SetUVs(0,uvs);
 
-        var triangles = new List<int> {0, 1, 2, 2, 3, 0};
+        var triangles = new List<int> {0, 1, 2, 0, 2, 3};
         mesh.SetTriangles(triangles, 0);
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -44,8 +44,30 @@ public class NodeMeshRenderer : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    public void CreateMesh(List<Vector3> position)
+    public void CreateMesh(List<Vector3> vertex)
     {
+        mesh = new Mesh();
+
+        var uvs = new List<Vector2>();
+        var triangles = new List<int>();
+        foreach (var vert in vertex)
+        {
+            uvs.Add(new Vector2(vert.x * .1f,vert.z * .1f));
+        }
+
+        for (var i = 0; i <= vertex.Count - 2; i++)
+        {
+            triangles.Add(0);
+            triangles.Add(i + 1);
+            triangles.Add(i);
+        }
         
+        mesh.SetVertices(vertex);
+        mesh.SetUVs(0,uvs);
+        mesh.SetTriangles(triangles, 0);
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+
+        meshFilter.mesh = mesh;
     }
 }

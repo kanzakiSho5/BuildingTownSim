@@ -58,3 +58,9 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+BuildingSim/Temp/
+BuildingSim/Library/ShaderCache/
+BuildingSim/Library/Artifacts/
+BuildingSim/Assets/Asphalt_materials/
+BuildingSim/Assets/8K Skybox Pack Free/
+BuildingSim/obj/Debug/

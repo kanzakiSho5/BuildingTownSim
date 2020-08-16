@@ -13,7 +13,7 @@ public class Line : MonoBehaviour
 
     private Vector3[] lineNodePosition;
 
-    [SerializeField] private int detail = 10;
+    [SerializeField] private int detail = 4;
     [SerializeField] private float loadLength;
     
     public void SetNode(Node start, Node end)
@@ -36,45 +36,74 @@ public class Line : MonoBehaviour
         startNode.OnChangePosition += OnChangePositionHandler;
         endNode.OnChangePosition += OnChangePositionHandler;
         
-        lineNodePosition = new Vector3[detail];
+        lineNodePosition = new Vector3[detail * 2 + 1];
     }
 
     private void OnChangePositionHandler()
     {
-        Transform roadBone = transform.GetChild(0);
+        Transform startSideRoadBone = transform.GetChild(0).GetChild(0);
+        Transform endSideRoadBone = transform.GetChild(0).GetChild(1);
+        // string str = "";
         
-        string str = "";
+        // TODO: Boneの角度の変更する機構の追加
+        lineNodePosition[detail] = BezierPoint(startNode.position, endNode.position, handlePos, detail / (float) (detail * 2 + 1));
+        transform.GetChild(0).position = lineNodePosition[detail];
+        
         for (int i = 0; i < detail; i++)
         {
-            Vector3 pos = BezierPoint(startNode.position, endNode.position, handlePos, 1 / (float)detail * i);
-            str += pos + ", ";
-            lineNodePosition[i] = pos;
-            // 最初以外のbone
-            if (i != 0)
-            {
-                float rad = Mathf.Atan2(lineNodePosition[i - 1].z - lineNodePosition[i].z,
-                    lineNodePosition[i - 1].x - lineNodePosition[i].x);
-                float deg = Mathf.Rad2Deg * rad;
-                roadBone.parent.eulerAngles = Vector3.down * deg;
-            }
-            roadBone.position = pos;
-
-            if (i == detail - 1)
-            {
-                if(startNodeNumber == null)
-                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength));
-                else
-                    startNode.ChangeLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength, startNodeNumber));
-                
-                if(endNodeNumber == null)
-                    endNodeNumber = endNode.AddLine(new lineInfo(roadBone, loadLength));
-                else
-                    endNode.ChangeLine(new lineInfo(roadBone, loadLength, endNodeNumber));
-            }
+            var startSideIndex = i + detail + 1;
+            var endSideIndex = -i + detail - 1;
             
-            roadBone = roadBone.GetChild(0);
+            // Debug.Log(
+            //     startSideIndex + ", " + 
+            //     startSideIndex / (float) (detail * 2 + 1) +", "+ 
+            //     endSideIndex + ", "+ 
+            //     endSideIndex / (float) (detail * 2 + 1) + "," +
+            //     (detail * 2 + 1));
+            
+            
+            Vector3 startPos = BezierPoint(startNode.position, endNode.position, handlePos,
+                startSideIndex / (float) (detail * 2 + 1));
+            Vector3 endPos = BezierPoint(startNode.position, endNode.position, handlePos,
+                endSideIndex / (float) (detail * 2 + 1));
+            
+            lineNodePosition[startSideIndex] = startPos;
+            lineNodePosition[endSideIndex] = endPos;
+            startSideRoadBone.position = startPos;
+            endSideRoadBone.position = endPos;
+            
+            // // 最初以外のbone
+            // if (i != 0)
+            // {
+            //     float rad = Mathf.Atan2(lineNodePosition[i - 1].z - lineNodePosition[i].z,
+            //         lineNodePosition[i - 1].x - lineNodePosition[i].x);
+            //     float deg = Mathf.Rad2Deg * rad;
+            //     roadBone.parent.eulerAngles = Vector3.down * deg;
+            // }
+            // roadBone.position = pos;
+            //
+            // if (i == detail - 1)
+            // {
+            //     if(startNodeNumber == null)
+            //         startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength));
+            //     else
+            //         startNode.ChangeLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength, startNodeNumber));
+            //     
+            //     if(endNodeNumber == null)
+            //         endNodeNumber = endNode.AddLine(new lineInfo(roadBone, loadLength));
+            //     else
+            //         endNode.ChangeLine(new lineInfo(roadBone, loadLength, endNodeNumber));
+            // }
+            
+            startSideRoadBone = startSideRoadBone.GetChild(0);
+            endSideRoadBone = endSideRoadBone.GetChild(0);
         }
         // Debug.Log(str);
+    }
+
+    private void GetDirection(Vector3 start, Vector3 lookat)
+    {
+        
     }
 
     private void OnDrawGizmos()

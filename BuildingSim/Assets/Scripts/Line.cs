@@ -62,14 +62,14 @@ public class Line : MonoBehaviour
             if (i == detail - 1)
             {
                 if(startNodeNumber == null)
-                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0), loadLength));
+                    startNodeNumber = startNode.AddLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength));
                 else
-                    startNode.ChangeLine(new lineInfo(transform.GetChild(0), loadLength, startNodeNumber));
+                    startNode.ChangeLine(new lineInfo(transform.GetChild(0).GetChild(0), loadLength, startNodeNumber));
                 
                 if(endNodeNumber == null)
-                    endNodeNumber = endNode.AddLine(new lineInfo(roadBone.GetChild(0), loadLength));
+                    endNodeNumber = endNode.AddLine(new lineInfo(roadBone, loadLength));
                 else
-                    endNode.ChangeLine(new lineInfo(roadBone.GetChild(0), loadLength, endNodeNumber));
+                    endNode.ChangeLine(new lineInfo(roadBone, loadLength, endNodeNumber));
             }
             
             roadBone = roadBone.GetChild(0);

@@ -70,3 +70,5 @@ BuildingSim/Library/InspectorExpandedItems.asset
 BuildingSim/Library/SourceAssetDB
 BuildingSim/Library/StateCache/Hierarchy/3509f8-mainStage.json
 BuildingSim/.idea/
+*.log
+BuildingSim/Library/StateCache/

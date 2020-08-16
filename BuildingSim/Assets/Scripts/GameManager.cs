@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
             c = (p4[1] - p3[1]) / (p4[0] - p3[0])
             d = p3[1] - c * p3[0] 
          */
-        
+        /*
         float a = (pos2.z - pos1.z) / (pos2.x - pos1.x);
         float b = pos1.z - a * pos1.x;
         float c = (pos4.z - pos3.z) / (pos4.x - pos3.x);
@@ -78,6 +78,19 @@ public class GameManager : MonoBehaviour
 
         Vector3 ret = new Vector3((d - b) / (a - c), .1f, (a * d - b * c) / (a - c));
         //Debug.Log(ret);
+        return ret;
+        */
+
+        // 外積での計算法に変更
+        float S1 = ((pos4.x - pos3.x) * (pos1.z - pos3.z) - (pos4.z - pos3.z) * (pos1.x - pos3.x)) / 2;
+        float S2 = ((pos4.x - pos3.x) * (pos3.z - pos2.z) - (pos4.z - pos3.z) * (pos3.x - pos2.x)) / 2;
+        
+        Vector3 ret = new Vector3(
+                pos1.x + (pos2.x - pos1.x) * S1 / (S1 + S2),
+                .1f,
+                pos1.z + (pos2.z - pos1.z) * S1 / (S1 + S2)
+            );
+        
         return ret;
     }
 }

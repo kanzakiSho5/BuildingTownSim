@@ -56,7 +56,7 @@ public class LineCreator : MonoBehaviour
         // StartNodeとEndNodeをおきかえ
         Vector3 endNodePos = NodesManager.Instance.ActiveNode.position;
         Vector3 cursorPos = GameManager.Instance.CursorPos;
-        Vector3 handleVec = lastHandlePos;
+        
         
         // 直角に回転させる原点
         Vector3 rootCenter = Vector3.Lerp(endNodePos, cursorPos, .5f);
@@ -66,19 +66,24 @@ public class LineCreator : MonoBehaviour
 
         //float cursorLength = Mathf.Pow(endNodePos.x - cursorPos.x, 2) + Mathf.Pow(endNodePos.y - cursorPos.y, 2);
         
+        Vector3 handleVec = handlePos - endNodePos;
+        handleVec = new Vector3(-handleVec.x, handleVec.y, -handleVec.z) + endNodePos;
 
         Vector3 tmpCursorPos = cursorPos - rootCenter;
         Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x ) + rootCenter;
         
+        
+        
         //Gizmos.DrawSphere(rotatedRootCenter, .5f);
 
         //Debug.Log(handleVec +", "+ endNodePos);
-        Vector3 newHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,endNodePos, handlePos);
+        Vector3 newHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,endNodePos, handleVec);
+        
         
         Gizmos.DrawSphere(newHandlePos, .5f);
         
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(endNodePos, handlePos);
+        Gizmos.DrawLine(endNodePos, handleVec);
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(rootCenter, rotatedRootCenter);
         

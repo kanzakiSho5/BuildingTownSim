@@ -68,9 +68,10 @@ public class Node : MonoBehaviour
 
     public void ChangeLine(lineInfo info)
     {
-        Debug.Log("ChangeRoad"+ position +": "+ info.bone.position +", "+ info.lineCount);
+        // Debug.Log("ChangeRoad"+ position +": "+ info.bone.position +", "+ info.lineCount);
         Vector3 linePos = info.bone.position;
         Vector3 nodePos = position;
+        
         // TODO: 一番親のBoneの角度が0になる問題の修正
         var dir = Mathf.Atan2(nodePos.z - linePos.z, nodePos.x - linePos.x);
         info.ChangeDirection(dir);
@@ -111,6 +112,7 @@ public class Node : MonoBehaviour
 
     private void SetWayAngle()
     {
+        // TODO:　モデル差し替えに伴う処理の変更
         GameObject endRoad = transform.GetChild(0).gameObject;
         
         endRoad.SetActive(false);
@@ -123,7 +125,7 @@ public class Node : MonoBehaviour
             endRoad.SetActive(true);
             lineInfo lineInfo = _conectLineInfo[0];
             var dir = lineInfo.direction * Mathf.Rad2Deg;
-            transform.GetChild(0).eulerAngles = Vector3.down * dir;
+            endRoad.transform.eulerAngles = Vector3.down * dir;
             Vector3 pos = transform.position;
             pos.y = .1f;
             lineInfo.bone.position = pos;
@@ -145,11 +147,12 @@ public class Node : MonoBehaviour
         {
             //Debug.Log(_conectLineInfo[i].bone.gameObject.name +": "+ lineInfo.direction);
             // Boneの方向調整
+            // TODO: 道の端のBone位置と角度の設定
             var dir = _conectLineInfo[i].direction * Mathf.Rad2Deg;
-            _conectLineInfo[i].bone.eulerAngles = Vector3.down * dir;
+            // _conectLineInfo[i].bone.eulerAngles = Vector3.down * dir;
             Vector3 pos = transform.position;
-            pos.y = .1f;
-            _conectLineInfo[i].bone.position = pos;
+            // pos.y = .1f;
+            // _conectLineInfo[i].bone.position = pos;
             Vector3 linepos = new Vector3(Mathf.Cos(_conectLineInfo[i].direction + Mathf.PI), 0, Mathf.Sin(_conectLineInfo[i].direction + Mathf.PI)) + pos;
             
             // Meshの張る頂点の計算

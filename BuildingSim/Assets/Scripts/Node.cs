@@ -72,7 +72,6 @@ public class Node : MonoBehaviour
         Vector3 linePos = info.bone.position;
         Vector3 nodePos = position;
         
-        // TODO: 一番親のBoneの角度が0になる問題の修正
         var dir = Mathf.Atan2(nodePos.z - linePos.z, nodePos.x - linePos.x);
         info.ChangeDirection(dir);
         _conectLineInfo[(int)info.lineCount] = info;
@@ -145,17 +144,10 @@ public class Node : MonoBehaviour
         _intersectionVertex.Clear();
         for (var i = 0; i < _conectLineInfo.Count; i++)
         {
-            //Debug.Log(_conectLineInfo[i].bone.gameObject.name +": "+ lineInfo.direction);
-            // Boneの方向調整
-            // TODO: 道の端のBone位置と角度の設定
-            var dir = _conectLineInfo[i].direction * Mathf.Rad2Deg;
-            // _conectLineInfo[i].bone.eulerAngles = Vector3.down * dir;
-            Vector3 pos = transform.position;
-            // pos.y = .1f;
-            // _conectLineInfo[i].bone.position = pos;
-            Vector3 linepos = new Vector3(Mathf.Cos(_conectLineInfo[i].direction + Mathf.PI), 0, Mathf.Sin(_conectLineInfo[i].direction + Mathf.PI)) + pos;
-            
             // Meshの張る頂点の計算
+            var dir = _conectLineInfo[i].direction * Mathf.Rad2Deg;
+            Vector3 pos = transform.position;
+            Vector3 linepos = new Vector3(Mathf.Cos(_conectLineInfo[i].direction + Mathf.PI), 0, Mathf.Sin(_conectLineInfo[i].direction + Mathf.PI)) + pos;
             if (i == 0)
             {
                 // 傾き
@@ -174,7 +166,7 @@ public class Node : MonoBehaviour
                     nextVec * -_conectLineInfo[_conectLineInfo.Count - 1].lineLength + nextLinePos
                     );
                 
-                _intersectionVertex.Add(vertex - transform.position);
+                _intersectionVertex.Add(vertex - pos);
             }
             else
             {
@@ -194,7 +186,36 @@ public class Node : MonoBehaviour
                     nextVec * _conectLineInfo[i].lineLength + linepos
                 );
 
-                _intersectionVertex.Add(vertex - transform.position);
+                // Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);
+                _intersectionVertex.Add(vertex - pos);
+            }
+        }
+        
+        
+        for(var i = 0; i < _conectLineInfo.Count;i++)
+        {
+            
+            Vector3 pos = transform.position;
+            // Lineの先端のBone処理
+            if (i == _conectLineInfo.Count - 1)
+            {
+                var dir = (Mathf.Atan2(
+                               _intersectionVertex[i].z - _intersectionVertex[0].z,
+                               _intersectionVertex[i].x - _intersectionVertex[0].x) +
+                           Mathf.PI * .5f) * Mathf.Rad2Deg; // モデル初期角度を引く
+                _conectLineInfo[i].bone.eulerAngles = Vector3.down * (dir);
+                _conectLineInfo[i].bone.GetChild(0).position = _intersectionVertex[0] + pos;
+                _conectLineInfo[i].bone.GetChild(1).position = _intersectionVertex[i] + pos;
+            }
+            else
+            {
+                var dir = (Mathf.Atan2(
+                               _intersectionVertex[i].z - _intersectionVertex[i+1].z,
+                               _intersectionVertex[i].x - _intersectionVertex[i+1].x) +
+                           Mathf.PI * .5f) * Mathf.Rad2Deg; // モデル初期角度を引く
+                _conectLineInfo[i].bone.eulerAngles = Vector3.down * (dir);
+                _conectLineInfo[i].bone.GetChild(0).position = _intersectionVertex[i+1] + pos;
+                _conectLineInfo[i].bone.GetChild(1).position = _intersectionVertex[i] + pos;
             }
         }
         _meshRenderer.CreateMesh(_intersectionVertex);

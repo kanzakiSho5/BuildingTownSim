@@ -45,7 +45,7 @@ public class Line : MonoBehaviour
         Transform endSideRoadBone = transform.GetChild(0).GetChild(0);
         // string str = "";
         
-        // TODO: Boneの角度の変更する機構の追加
+        // TODO: 道を更新する際にNodeの更新がずれる
         lineNodePosition[detail] = BezierPoint(startNode.position, endNode.position, handlePos, (detail + 1) / (float) (detail * 2 + 2));
         transform.GetChild(0).position = lineNodePosition[detail];
         float dir = GetDirection(startNode.position, endNode.position) * Mathf.Rad2Deg;
@@ -78,8 +78,8 @@ public class Line : MonoBehaviour
             
             if (i == detail - 1)
             {
-                startSideRoadBone.eulerAngles += Vector3.up * 90;
-                endSideRoadBone.eulerAngles += Vector3.down * 90;
+                //startSideRoadBone.eulerAngles += Vector3.up * 90;
+                //endSideRoadBone.eulerAngles += Vector3.down * 90;
                 
                 if(startNodeNumber == null)
                     startNodeNumber = startNode.AddLine(new lineInfo(endSideRoadBone, loadLength));

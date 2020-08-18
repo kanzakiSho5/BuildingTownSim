@@ -72,6 +72,7 @@ public class Node : MonoBehaviour
         Vector3 linePos = info.bone.position;
         Vector3 nodePos = position;
         
+        // TODO: info.lineCountがしっかり入ってない？？
         var dir = Mathf.Atan2(nodePos.z - linePos.z, nodePos.x - linePos.x);
         info.ChangeDirection(dir);
         _conectLineInfo[(int)info.lineCount] = info;
@@ -123,11 +124,15 @@ public class Node : MonoBehaviour
             // 終点処理
             endRoad.SetActive(true);
             lineInfo lineInfo = _conectLineInfo[0];
-            var dir = lineInfo.direction * Mathf.Rad2Deg;
-            endRoad.transform.eulerAngles = Vector3.down * dir;
+            var dir = lineInfo.direction;
+            endRoad.transform.eulerAngles = Vector3.down * (dir * Mathf.Rad2Deg);
             Vector3 pos = transform.position;
             pos.y = .1f;
-            lineInfo.bone.position = pos;
+            
+            lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + pos;
+            lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + pos;
+            
+            //lineInfo.bone.position = pos;
             return;
         }
         
@@ -145,13 +150,12 @@ public class Node : MonoBehaviour
         for (var i = 0; i < _conectLineInfo.Count; i++)
         {
             // Meshの張る頂点の計算
-            var dir = _conectLineInfo[i].direction * Mathf.Rad2Deg;
             Vector3 pos = transform.position;
             Vector3 linepos = new Vector3(Mathf.Cos(_conectLineInfo[i].direction + Mathf.PI), 0, Mathf.Sin(_conectLineInfo[i].direction + Mathf.PI)) + pos;
             if (i == 0)
             {
                 // 傾き
-                dir = _conectLineInfo[i].direction + Mathf.PI * .5f;
+                var dir = _conectLineInfo[i].direction + Mathf.PI * .5f;
                 float nextDir = _conectLineInfo[_conectLineInfo.Count - 1].direction + Mathf.PI * .5f;
                 
                 // ベクトル
@@ -171,7 +175,7 @@ public class Node : MonoBehaviour
             else
             {
                 // 傾き
-                dir = _conectLineInfo[i - 1].direction + Mathf.PI * .5f;
+                var dir = _conectLineInfo[i - 1].direction + Mathf.PI * .5f;
                 float nextDir = _conectLineInfo[i].direction + Mathf.PI * .5f;
                 
                 // ベクトル
@@ -186,7 +190,7 @@ public class Node : MonoBehaviour
                     nextVec * _conectLineInfo[i].lineLength + linepos
                 );
 
-                // Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);
+                Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);
                 _intersectionVertex.Add(vertex - pos);
             }
         }

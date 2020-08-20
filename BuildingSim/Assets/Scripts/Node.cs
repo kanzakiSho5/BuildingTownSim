@@ -72,10 +72,15 @@ public class Node : MonoBehaviour
         Vector3 linePos = info.bone.position;
         Vector3 nodePos = position;
         
-        // TODO: info.lineCountがしっかり入ってない？？
         var dir = Mathf.Atan2(nodePos.z - linePos.z, nodePos.x - linePos.x);
         info.ChangeDirection(dir);
-        _conectLineInfo[(int)info.lineCount] = info;
+        for (var i = 0; i < _conectLineInfo.Count; i++)
+        {
+            if (_conectLineInfo[i].lineCount != info.lineCount)
+                continue;
+            _conectLineInfo[i] = info;
+            break;
+        }
         if(_conectLineInfo.Count <= 2)
             SetWayAngle();
         else
@@ -119,25 +124,26 @@ public class Node : MonoBehaviour
         if(_conectLineInfo.Count == 0)
             return;
         
-        if (_conectLineInfo.Count == 1)
-        {
-            // 終点処理
-            endRoad.SetActive(true);
-            lineInfo lineInfo = _conectLineInfo[0];
-            var dir = lineInfo.direction;
-            endRoad.transform.eulerAngles = Vector3.down * (dir * Mathf.Rad2Deg);
-            Vector3 pos = transform.position;
-            pos.y = .1f;
-            
-            lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + pos;
-            lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + pos;
-            
-            //lineInfo.bone.position = pos;
-            return;
-        }
         
+        // 終点処理
+        endRoad.SetActive(true);
+        lineInfo lineInfo = _conectLineInfo[0];
+        var dir = lineInfo.direction;
+        endRoad.transform.eulerAngles = Vector3.down * (dir * Mathf.Rad2Deg);
+        
+        
+        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + position;
+        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + position;
+        
+        //lineInfo.bone.position = pos;
+        if(_conectLineInfo.Count == 1)
+            return;
+
         // 道が続くとき
         endRoad.SetActive(false);
+        lineInfo = _conectLineInfo[1];
+        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + position;
+        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + position;
     }
     
     private List<Vector3> _intersectionVertex = new List<Vector3>();
@@ -190,7 +196,7 @@ public class Node : MonoBehaviour
                     nextVec * _conectLineInfo[i].lineLength + linepos
                 );
 
-                Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);
+                // Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);
                 _intersectionVertex.Add(vertex - pos);
             }
         }
@@ -250,5 +256,17 @@ public class Node : MonoBehaviour
             Gizmos.DrawSphere(_intersectionVertex[i] + transform.position, 0.1f);
             
         }
+        
+        if(_conectLineInfo.Count != 2)
+            return;
+        
+        pos = new Vector3(
+            (Mathf.Cos(_conectLineInfo[0].direction) + Mathf.Cos(_conectLineInfo[1].direction)),
+            0,
+            (Mathf.Sin(_conectLineInfo[0].direction) + Mathf.Sin(_conectLineInfo[1].direction))).normalized;
+        // Debug.Log(pos);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position,pos + transform.position);
+
     }
 }

@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     {
         get
         {
+            if (FriezeCursorPos) return SelectorPos;
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray,200f);
 
@@ -39,6 +41,8 @@ public class GameManager : MonoBehaviour
             return Vector3.zero;
         }
     }
+
+    private bool FriezeCursorPos = false;
     
     [SerializeField]
     private GameObject Selector;
@@ -50,10 +54,18 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        //if (isOnCreate)
-        {
-            Selector.transform.position = CursorPos;
-        }
+        Selector.transform.position = CursorPos;
+    }
+
+    public void OnFriezeCoursorPos(Vector3 position)
+    {
+        SelectorPos = position;
+        FriezeCursorPos = true;
+    }
+
+    public void UnFriezeCousorPos()
+    {
+        FriezeCursorPos = false;
     }
 
     public void ChangeCreateType(CreateType createType)

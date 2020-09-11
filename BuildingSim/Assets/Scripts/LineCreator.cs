@@ -14,10 +14,19 @@ public class LineCreator : MonoBehaviour
     private Vector3 handlePos = Vector3.zero;
 
     [SerializeField] private GameObject LoadObj;
+    [SerializeField] private GameObject LoadAssister;
+    [SerializeField] private GameObject GuideLine;
 
     private void Awake()
     {
         if (!Instance) Instance = this;
+    }
+
+    public void Update()
+    {
+        if(NodesManager.Instance)
+            if(NodesManager.Instance.ActiveNode)
+                DrawCreateLoadAssister();
     }
 
     public void OnCreateLoad(Node startNode, Node endNode)
@@ -47,10 +56,70 @@ public class LineCreator : MonoBehaviour
         handlePos = Vector3.zero;
     }
 
+    private void DrawCreateLoadAssister()
+    {
+        var activeNodePos = NodesManager.Instance.ActiveNode.position;
+        var cursorPos = GameManager.Instance.CursorPos;
+        Vector3 rootCenter = Vector3.Lerp(activeNodePos, cursorPos, .5f);
+        
+        var assisterBone = LoadAssister.transform.GetChild(0);
+        
+        
+
+        var dir = Mathf.Atan2(cursorPos.z - activeNodePos.z, cursorPos.x - activeNodePos.x);
+        var eulerAngles = Vector3.down * ((dir - Mathf.PI * .5f) * Mathf.Rad2Deg);
+        
+        assisterBone.position = activeNodePos;
+        assisterBone.eulerAngles = eulerAngles;
+        
+        assisterBone.GetChild(0).position = cursorPos;
+        assisterBone.GetChild(0).eulerAngles = eulerAngles;
+        
+        Vector3 handleVec = handlePos - activeNodePos;
+        if (handlePos == Vector3.zero)
+            handleVec = Vector3.Lerp(cursorPos, activeNodePos, .5f);
+        handleVec = new Vector3(-handleVec.x, handleVec.y, -handleVec.z) + activeNodePos;
+        Vector3 tmpCursorPos = cursorPos - rootCenter;
+        Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x ) + rootCenter;
+        
+        Vector3 currentHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,activeNodePos, handleVec);
+        Debug.Log(currentHandlePos +", "+activeNodePos);
+        GuideLine.transform.GetChild(0).eulerAngles = new Vector3(
+            90,
+            -Mathf.Atan2(currentHandlePos.z - activeNodePos.z, currentHandlePos.x - activeNodePos.z) * Mathf.Rad2Deg,
+            0f);
+        Vector3 tempPos = Vector3.zero;
+        for (int i = 0; i < 10; i++)
+        {
+            var startLerp = Vector3.Lerp(activeNodePos, currentHandlePos, i*.1f);
+            var endLerp = Vector3.Lerp(currentHandlePos, cursorPos, i*.1f);
+            var bezierPos = Vector3.Lerp(startLerp,endLerp, i*.1f);
+            
+            if(float.IsNaN(bezierPos.x) ||float.IsNaN(bezierPos.y) ||float.IsNaN(bezierPos.z)) 
+                break; 
+            
+            GuideLine.transform.GetChild(i).position = bezierPos;
+
+            if (i == 0)
+            {
+                tempPos = bezierPos;
+                continue;
+            }
+
+            var lineDir = Mathf.Atan2(tempPos.z - bezierPos.z, tempPos.x - bezierPos.x) * Mathf.Rad2Deg;
+            GuideLine.transform.GetChild(i).eulerAngles = new Vector3(90f, -lineDir,0f);
+
+            tempPos = bezierPos;
+        }
+    }
+
     private void OnDrawGizmos()
     {
-        // 実行前エラー回避
         if(!NodesManager.Instance)
+            return;
+        
+        // 実行前エラー回避
+        if(!NodesManager.Instance.ActiveNode)
             return;
         
         // StartNodeとEndNodeをおきかえ

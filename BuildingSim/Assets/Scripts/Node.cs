@@ -103,6 +103,17 @@ public class Node : MonoBehaviour
         LineCreator.Instance.OnChangeHandlePos();
     }
 
+    private void OnMouseEnter()
+    {
+        Debug.Log("On Over Node!");
+        GameManager.Instance.OnFriezeCoursorPos(this.position);
+    }
+
+    private void OnMouseExit()
+    {
+        GameManager.Instance.UnFriezeCousorPos();
+    }
+
     public void OnActive(bool active)
     {
         isActive = active;
@@ -132,8 +143,10 @@ public class Node : MonoBehaviour
         endRoad.transform.eulerAngles = Vector3.down * (dir * Mathf.Rad2Deg);
         
         
-        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + position;
-        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + position;
+        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
+            (lineInfo.lineLength * .5f) + position;
+        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
+            (-lineInfo.lineLength * .5f) + position;
         
         //lineInfo.bone.position = pos;
         if(_conectLineInfo.Count == 1)
@@ -142,8 +155,10 @@ public class Node : MonoBehaviour
         // 道が続くとき
         endRoad.SetActive(false);
         lineInfo = _conectLineInfo[1];
-        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* -lineInfo.lineLength + position;
-        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))* lineInfo.lineLength + position;
+        lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
+            (-lineInfo.lineLength * .5f) + position;
+        lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
+            (lineInfo.lineLength * .5f) + position;
     }
     
     private List<Vector3> _intersectionVertex = new List<Vector3>();
@@ -168,12 +183,15 @@ public class Node : MonoBehaviour
                 Vector3 vec = new Vector3(Mathf.Cos(dir), 0, Mathf.Sin(dir));
                 Vector3 nextVec = new Vector3(Mathf.Cos(nextDir),0,Mathf.Sin(nextDir));
                 Vector3 nextLinePos = new Vector3(Mathf.Cos(_conectLineInfo[_conectLineInfo.Count -1].direction), 0, Mathf.Sin(_conectLineInfo[_conectLineInfo.Count - 1].direction)) + pos;
+
+                float lineLength = _conectLineInfo[i].lineLength * .5f;
+                float nextLineLength = -_conectLineInfo[_conectLineInfo.Count - 1].lineLength * .5f;
                 
                 Vector3 vertex = GameManager.GetIntersection(
-                    vec * _conectLineInfo[i].lineLength + pos,
-                    vec * _conectLineInfo[i].lineLength + linepos,
-                    nextVec * -_conectLineInfo[_conectLineInfo.Count - 1].lineLength + pos,
-                    nextVec * -_conectLineInfo[_conectLineInfo.Count - 1].lineLength + nextLinePos
+                    vec * lineLength + pos,
+                    vec * lineLength + linepos,
+                    nextVec * nextLineLength + pos,
+                    nextVec * nextLineLength + nextLinePos
                     );
                 
                 _intersectionVertex.Add(vertex - pos);
@@ -188,12 +206,15 @@ public class Node : MonoBehaviour
                 Vector3 vec = new Vector3(Mathf.Cos(dir), 0, Mathf.Sin(dir));
                 Vector3 nextVec = new Vector3(Mathf.Cos(nextDir),0,Mathf.Sin(nextDir));
                 Vector3 prevLinePos = new Vector3(Mathf.Cos(_conectLineInfo[i -1].direction), 0, Mathf.Sin(_conectLineInfo[i - 1].direction)) + pos;
-
+                
+                float lineLength = -_conectLineInfo[i - 1].lineLength * .5f;
+                float nextLineLength = _conectLineInfo[i].lineLength * .5f;
+                
                 Vector3 vertex = GameManager.GetIntersection(
-                    vec * -_conectLineInfo[i - 1].lineLength + pos,
-                    vec * -_conectLineInfo[i - 1].lineLength + prevLinePos,
-                    nextVec * _conectLineInfo[i].lineLength + pos,
-                    nextVec * _conectLineInfo[i].lineLength + linepos
+                    vec * lineLength + pos,
+                    vec * lineLength + prevLinePos,
+                    nextVec * nextLineLength + pos,
+                    nextVec * nextLineLength + linepos
                 );
 
                 // Debug.LogFormat("info Count: {0}, vertex: {1}", _conectLineInfo[i].lineCount, vertex);

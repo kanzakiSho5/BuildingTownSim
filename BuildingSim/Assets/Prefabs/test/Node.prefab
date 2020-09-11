@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 854776937639251388}
   - component: {fileID: 854776937639251389}
   - component: {fileID: 2100316055009845364}
-  - component: {fileID: 854776937639251390}
+  - component: {fileID: 6453295474236506953}
   - component: {fileID: 854776937639251391}
   - component: {fileID: 6557869737308154008}
   - component: {fileID: 396565620059539938}
@@ -61,8 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a9db9f86ebd0c4c835b480157098a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &854776937639251390
-SphereCollider:
+--- !u!136 &6453295474236506953
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -71,8 +71,9 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 2
+  m_Height: 0
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &854776937639251391
 MonoBehaviour:
@@ -236,6 +237,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8191122222615137720, guid: 025e548c7e0d14b46821950d9bcb8550,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: dae0f2d37123c45bbb1c77c4971e8ceb, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 025e548c7e0d14b46821950d9bcb8550, type: 3}
 --- !u!4 &5774519876465037018 stripped

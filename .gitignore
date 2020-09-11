@@ -72,3 +72,5 @@ BuildingSim/Library/StateCache/Hierarchy/3509f8-mainStage.json
 BuildingSim/.idea/
 *.log
 BuildingSim/Library/StateCache/
+BuildingSim/Assets/LowpolyStreetPack/
+BuildingSim/Assets/Real Stars Skybox/

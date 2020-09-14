@@ -58,14 +58,13 @@ public class NodesManager : MonoBehaviour
         }
     }
 
-    public void OnCreatedNode(Node createdNode)
+    public void CreatedNode(Node createdNode)
     {
         
         Nodes.Add(createdNode);
         // 道がつくれるとき
         if (ActiveNode || Nodes.Count > 1)
         {
-            LineCreator.Instance.OnCreateLoad(ActiveNode, createdNode);
             AllNodeOnActive(false);
         }
 

@@ -92,8 +92,7 @@ public class Node : MonoBehaviour
         
         if (GameManager.Instance.CullentCreateType == CreateType.CreateLoad)
         {
-            LineCreator.Instance.OnCreateLoad(NodesManager.Instance.ActiveNode, this);
-            Debug.Log(NodesManager.Instance.ActiveNode.position +", "+ this.position);
+            NodeCreator.Instance.CreateNode(this.position, this);
             temp = Vector3.zero;// Road位置更新
         }
 

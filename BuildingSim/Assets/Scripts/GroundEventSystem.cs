@@ -28,8 +28,9 @@ public class GroundEventSystem : MonoBehaviour, IPointerClickHandler,IDragHandle
         switch (GameManager.Instance.CullentCreateType)
         {
             case CreateType.Move:
-                Debug.Log(eventData.pointerCurrentRaycast.worldPosition);
+                /*Debug.Log(eventData.pointerCurrentRaycast.worldPosition);
                 NodesManager.Instance.MoveSelectNode(eventData.pointerCurrentRaycast.worldPosition);
+                */
                 break;
             
         }

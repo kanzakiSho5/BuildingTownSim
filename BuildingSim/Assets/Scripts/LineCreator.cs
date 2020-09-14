@@ -3,19 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LineCreator : MonoBehaviour
 {
     public static LineCreator Instance { get; private set; }
     public bool isOnCreate = false;
+    [FormerlySerializedAs("currentHandlePos")] public Vector3 CurrentHandlePos;
 
 
     private Vector3 lastHandlePos = Vector3.zero;
     private Vector3 handlePos = Vector3.zero;
 
-    [SerializeField] private GameObject LoadObj;
-    [SerializeField] private GameObject LoadAssister;
-    [SerializeField] private GameObject GuideLine;
+    [FormerlySerializedAs("LoadObj")] [SerializeField] private GameObject loadObj;
+    [FormerlySerializedAs("LoadAssister")] [SerializeField] private GameObject loadAssister;
+    [FormerlySerializedAs("GuideLine")] [SerializeField] private GameObject guideLine;
 
     private void Awake()
     {
@@ -29,7 +31,7 @@ public class LineCreator : MonoBehaviour
                 DrawCreateLoadAssister();
     }
 
-    public void OnCreateLoad(Node startNode, Node endNode)
+    public void OnCreateRoad(Node startNode, Node endNode)
     {
         // handleの位置
         if (handlePos == Vector3.zero) // 初期値
@@ -43,17 +45,29 @@ public class LineCreator : MonoBehaviour
             Vector3 tmpCenterPos = endNode.position - rootCenter;
             Vector3 rotatedRootCenter = new Vector3(-tmpCenterPos.z, tmpCenterPos.y, tmpCenterPos.x) + rootCenter;
             
-            handlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter, startNode.position,handlePos);
+            handlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter, startNode.position, handlePos);
         }
-        GameObject obj = Instantiate(LoadObj, handlePos, Quaternion.identity);
-        Debug.Log("Create Road: "+ startNode.position +", "+ endNode.position);
         
+        GameObject obj = Instantiate(loadObj, handlePos, Quaternion.identity);
         obj.GetComponent<Line>().SetNode(startNode, endNode, handlePos);
+        //Debug.Log("Create Road: "+ startNode.position +", "+ endNode.position);
+    }
+
+    public void OnCreateRoad(Node startNode, Node endNode, Vector3 handlePosition)
+    {
+        handlePos = handlePosition;
+        GameObject obj = Instantiate(loadObj, handlePosition, Quaternion.identity);
+        obj.GetComponent<Line>().SetNode(startNode, endNode, handlePosition);
     }
 
     public void OnChangeHandlePos()
     {
         handlePos = Vector3.zero;
+    }
+
+    public Vector3 GetHandlePos()
+    {
+        return handlePos;
     }
 
     private void DrawCreateLoadAssister()
@@ -62,7 +76,7 @@ public class LineCreator : MonoBehaviour
         var cursorPos = GameManager.Instance.CursorPos;
         Vector3 rootCenter = Vector3.Lerp(activeNodePos, cursorPos, .5f);
         
-        var assisterBone = LoadAssister.transform.GetChild(0);
+        var assisterBone = loadAssister.transform.GetChild(0);
         
         
 
@@ -75,30 +89,30 @@ public class LineCreator : MonoBehaviour
         assisterBone.GetChild(0).position = cursorPos;
         assisterBone.GetChild(0).eulerAngles = eulerAngles;
         
-        Vector3 handleVec = handlePos - activeNodePos;
+        var activeHandlePos = handlePos - activeNodePos;
+        activeHandlePos = new Vector3(-activeHandlePos.x, activeHandlePos.y, -activeHandlePos.z) + activeNodePos;
         if (handlePos == Vector3.zero)
-            handleVec = Vector3.Lerp(cursorPos, activeNodePos, .5f);
-        handleVec = new Vector3(-handleVec.x, handleVec.y, -handleVec.z) + activeNodePos;
+            activeHandlePos = Vector3.Lerp(cursorPos, activeNodePos, .5f);
         Vector3 tmpCursorPos = cursorPos - rootCenter;
         Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x ) + rootCenter;
         
-        Vector3 currentHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,activeNodePos, handleVec);
-        Debug.Log(currentHandlePos +", "+activeNodePos);
-        GuideLine.transform.GetChild(0).eulerAngles = new Vector3(
+        CurrentHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,activeNodePos, activeHandlePos);
+        // Debug.Log(currentHandlePos +", "+activeNodePos);
+        guideLine.transform.GetChild(0).eulerAngles = new Vector3(
             90,
-            -Mathf.Atan2(currentHandlePos.z - activeNodePos.z, currentHandlePos.x - activeNodePos.z) * Mathf.Rad2Deg,
+            -Mathf.Atan2(CurrentHandlePos.z - activeNodePos.z, CurrentHandlePos.x - activeNodePos.z) * Mathf.Rad2Deg,
             0f);
         Vector3 tempPos = Vector3.zero;
         for (int i = 0; i < 10; i++)
         {
-            var startLerp = Vector3.Lerp(activeNodePos, currentHandlePos, i*.1f);
-            var endLerp = Vector3.Lerp(currentHandlePos, cursorPos, i*.1f);
+            var startLerp = Vector3.Lerp(activeNodePos, CurrentHandlePos, i*.1f);
+            var endLerp = Vector3.Lerp(CurrentHandlePos, cursorPos, i*.1f);
             var bezierPos = Vector3.Lerp(startLerp,endLerp, i*.1f);
             
             if(float.IsNaN(bezierPos.x) ||float.IsNaN(bezierPos.y) ||float.IsNaN(bezierPos.z)) 
                 break; 
             
-            GuideLine.transform.GetChild(i).position = bezierPos;
+            guideLine.transform.GetChild(i).position = bezierPos;
 
             if (i == 0)
             {
@@ -107,7 +121,7 @@ public class LineCreator : MonoBehaviour
             }
 
             var lineDir = Mathf.Atan2(tempPos.z - bezierPos.z, tempPos.x - bezierPos.x) * Mathf.Rad2Deg;
-            GuideLine.transform.GetChild(i).eulerAngles = new Vector3(90f, -lineDir,0f);
+            guideLine.transform.GetChild(i).eulerAngles = new Vector3(90f, -lineDir,0f);
 
             tempPos = bezierPos;
         }

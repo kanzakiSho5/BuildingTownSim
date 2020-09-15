@@ -76,18 +76,20 @@ public class LineCreator : MonoBehaviour
         var cursorPos = GameManager.Instance.CursorPos;
         Vector3 rootCenter = Vector3.Lerp(activeNodePos, cursorPos, .5f);
         
-        var assisterBone = loadAssister.transform.GetChild(0);
+        //var assisterBone = loadAssister.transform.GetChild(0);
         
         
 
         var dir = Mathf.Atan2(cursorPos.z - activeNodePos.z, cursorPos.x - activeNodePos.x);
         var eulerAngles = Vector3.down * ((dir - Mathf.PI * .5f) * Mathf.Rad2Deg);
         
+        /*
         assisterBone.position = activeNodePos;
         assisterBone.eulerAngles = eulerAngles;
         
         assisterBone.GetChild(0).position = cursorPos;
         assisterBone.GetChild(0).eulerAngles = eulerAngles;
+        */
         
         var activeHandlePos = handlePos - activeNodePos;
         activeHandlePos = new Vector3(-activeHandlePos.x, activeHandlePos.y, -activeHandlePos.z) + activeNodePos;

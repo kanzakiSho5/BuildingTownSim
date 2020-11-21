@@ -2,13 +2,14 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
+BuildingSim/Temp/
+BuildingSim/Library/
+BuildingSim/[Oo]bj/
+BuildingSim/[Bb]uild/
+BuildingSim/.build/
+BuildingSim/[Bb]uilds/
+BuildingSim/[Ll]ogs/
+BuildingSim/[Mm]emoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -21,6 +22,9 @@
 
 # Visual Studio cache directory
 .vs/
+
+#Jetbrains Rider File
+BuildingSim/.idea/
 
 # Gradle cache directory
 .gradle/
@@ -58,21 +62,10 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-BuildingSim/Temp/
-BuildingSim/Library/ShaderCache/
-BuildingSim/Library/Artifacts/
+#Assets
 BuildingSim/Assets/Asphalt_materials/
 BuildingSim/Assets/8K Skybox Pack Free/
-BuildingSim/obj/Debug/
-BuildingSim/Library/AnnotationManager
-BuildingSim/Library/CurrentLayout-default.dwlt
-BuildingSim/Library/InspectorExpandedItems.asset
-BuildingSim/Library/SourceAssetDB
-BuildingSim/Library/StateCache/Hierarchy/3509f8-mainStage.json
-BuildingSim/.idea/
-*.log
-BuildingSim/Library/StateCache/
 BuildingSim/Assets/LowpolyStreetPack/
 BuildingSim/Assets/Real Stars Skybox/
-BuildingSim/.build/
 BuildingSim/Assets/Japanese_Street/
+*.log

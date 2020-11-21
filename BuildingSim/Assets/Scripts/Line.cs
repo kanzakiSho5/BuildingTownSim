@@ -13,7 +13,10 @@ public class Line : MonoBehaviour
 
     private Vector3[] lineNodePosition;
 
+    [Tooltip("道の分割数")] 
     [SerializeField] private int detail = 4;
+    
+    [Tooltip("道の幅")]
     [SerializeField] private float loadLength;
     
     public void SetNode(Node start, Node end)

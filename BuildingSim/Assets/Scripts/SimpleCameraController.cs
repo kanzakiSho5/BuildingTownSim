@@ -66,6 +66,8 @@ namespace UnityTemplateProjects
         [Tooltip("Time it takes to interpolate camera position 99% of the way to the target."), Range(0.001f, 1f)]
         public float positionLerpTime = 0.2f;
 
+        private float ScrollSpeed = 5.0f;
+
         [Header("Rotation Settings")]
         [Tooltip("X = Change in mouse position.\nY = Multiplicative factor for camera rotation.")]
         public AnimationCurve mouseSensitivityCurve = new AnimationCurve(new Keyframe(0f, 0.5f, 0f, 5f), new Keyframe(1f, 2.5f, 0f, 0f));
@@ -109,6 +111,8 @@ namespace UnityTemplateProjects
             {
                 direction += Vector3.up;
             }
+            
+            direction += Vector3.forward * (Input.mouseScrollDelta.y * ScrollSpeed);
             return direction;
         }
         
@@ -160,7 +164,7 @@ namespace UnityTemplateProjects
             }
 
             // Modify movement by a boost factor (defined in Inspector and modified in play mode through the mouse scroll wheel)
-            boost += Input.mouseScrollDelta.y * 0.2f;
+            //boost += Input.mouseScrollDelta.y * 0.2f;
             translation *= Mathf.Pow(2.0f, boost);
 
 #elif USE_INPUT_SYSTEM 

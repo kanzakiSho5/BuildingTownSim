@@ -98,36 +98,29 @@ public class NodeCreator : MonoBehaviour
             
         var activeNodePos = NodesManager.Instance.ActiveNode.position;
         var handlePos = LineCreator.Instance.CurrentHandlePos;
-        var lineLength = 
-            Mathf.Sqrt(
-                Mathf.Pow(activeNodePos.x - handlePos.x, 2f) + 
-                Mathf.Pow(activeNodePos.y - handlePos.y, 2f) + 
-                Mathf.Pow(activeNodePos.z - handlePos.z, 2f)) + 
-            Mathf.Sqrt(
-                Mathf.Pow(handlePos.x - position.x, 2f) + 
-                Mathf.Pow(handlePos.y - position.y, 2f) + 
-                Mathf.Pow(handlePos.z - position.z, 2f));
+        var bezier = new Bezier(activeNodePos, position, handlePos);
+        var bezierLength = bezier.Length;
 
-        Debug.Log("LineLength: "+ lineLength);
-        var nodeCount = Mathf.FloorToInt(lineLength / 20) + 1;
+        Debug.Log("LineLength: "+ bezierLength);
+        var nodeCount = Mathf.FloorToInt(bezierLength / 20) + 1;
         var tmpSecHandlePos = handlePos;
         
         for (int i = 1; i <= nodeCount; i++)
         {
             // 中間点更新されたActiveNodeの位置
             var currentActiveNode = NodesManager.Instance.ActiveNode;
+            
+            // 長さからの等分位置
+            var tPos = bezier.ConstantBezierT((float) i / nodeCount); 
 
             // 中間ノード位置
-            var createNodePos = 
-                Vector3.Lerp(
-                    Vector3.Lerp(activeNodePos,handlePos, (float)i / nodeCount),
-                    Vector3.Lerp(handlePos, position, (float)i/ nodeCount),
-                    (float)i/nodeCount);
+            var createNodePos = bezier.BezierPosition(tPos);
             
             // 中間ハンドル位置
-            var createHandlePos = Vector3.Lerp(currentActiveNode.position, tmpSecHandlePos, (float)1 / (nodeCount - (i - 1)));
+            var createHandlePos = Vector3.Lerp(currentActiveNode.position, tmpSecHandlePos, tPos);
+            
             // 残った側のベジェハンドル位置
-            tmpSecHandlePos = Vector3.Lerp(tmpSecHandlePos, position, (float) 1 / (nodeCount - (i - 1)));
+            tmpSecHandlePos = Vector3.Lerp(tmpSecHandlePos, position, 1 - tPos);
 
             if (i == nodeCount)
             {

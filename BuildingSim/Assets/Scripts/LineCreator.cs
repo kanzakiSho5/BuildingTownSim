@@ -19,18 +19,21 @@ public class LineCreator : MonoBehaviour
     [FormerlySerializedAs("LoadAssister")] [SerializeField] private GameObject loadAssister;
     [FormerlySerializedAs("GuideLine")] [SerializeField] private GameObject guideLine;
 
+    #region UnityEvent Method
     private void Awake()
     {
         if (!Instance) Instance = this;
     }
 
-    public void Update()
+    private void Update()
     {
         if(NodesManager.Instance)
             if(NodesManager.Instance.ActiveNode)
                 DrawCreateLoadAssister();
     }
+    #endregion
 
+    #region public Method
     public void OnCreateRoad(Node startNode, Node endNode)
     {
         // handleの位置
@@ -69,7 +72,9 @@ public class LineCreator : MonoBehaviour
     {
         return handlePos;
     }
+    #endregion
 
+    #region private Method
     private void DrawCreateLoadAssister()
     {
         var activeNodePos = NodesManager.Instance.ActiveNode.position;
@@ -82,15 +87,7 @@ public class LineCreator : MonoBehaviour
 
         var dir = Mathf.Atan2(cursorPos.z - activeNodePos.z, cursorPos.x - activeNodePos.x);
         var eulerAngles = Vector3.down * ((dir - Mathf.PI * .5f) * Mathf.Rad2Deg);
-        
-        /*
-        assisterBone.position = activeNodePos;
-        assisterBone.eulerAngles = eulerAngles;
-        
-        assisterBone.GetChild(0).position = cursorPos;
-        assisterBone.GetChild(0).eulerAngles = eulerAngles;
-        */
-        
+
         var activeHandlePos = handlePos - activeNodePos;
         activeHandlePos = new Vector3(-activeHandlePos.x, activeHandlePos.y, -activeHandlePos.z) + activeNodePos;
         if (handlePos == Vector3.zero)
@@ -99,7 +96,6 @@ public class LineCreator : MonoBehaviour
         Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x ) + rootCenter;
         
         CurrentHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,activeNodePos, activeHandlePos);
-        // Debug.Log(currentHandlePos +", "+activeNodePos);
         guideLine.transform.GetChild(0).eulerAngles = new Vector3(
             90,
             -Mathf.Atan2(CurrentHandlePos.z - activeNodePos.z, CurrentHandlePos.x - activeNodePos.z) * Mathf.Rad2Deg,
@@ -128,74 +124,42 @@ public class LineCreator : MonoBehaviour
             tempPos = bezierPos;
         }
     }
+    #endregion
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if(!NodesManager.Instance)
+        if (!NodesManager.Instance)
             return;
-        
+
         // 実行前エラー回避
-        if(!NodesManager.Instance.ActiveNode)
+        if (!NodesManager.Instance.ActiveNode)
             return;
-        
+
         // StartNodeとEndNodeをおきかえ
         Vector3 endNodePos = NodesManager.Instance.ActiveNode.position;
         Vector3 cursorPos = GameManager.Instance.CursorPos;
         
-        
         // 直角に回転させる原点
         Vector3 rootCenter = Vector3.Lerp(endNodePos, cursorPos, .5f);
-        
+
         Gizmos.color = Color.magenta;
         Gizmos.DrawSphere(rootCenter, 1f);
 
-        //float cursorLength = Mathf.Pow(endNodePos.x - cursorPos.x, 2) + Mathf.Pow(endNodePos.y - cursorPos.y, 2);
-        
         Vector3 handleVec = handlePos - endNodePos;
         handleVec = new Vector3(-handleVec.x, handleVec.y, -handleVec.z) + endNodePos;
 
         Vector3 tmpCursorPos = cursorPos - rootCenter;
-        Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x ) + rootCenter;
+        Vector3 rotatedRootCenter = new Vector3(-tmpCursorPos.z, tmpCursorPos.y, tmpCursorPos.x) + rootCenter;
         
-        
-        
-        //Gizmos.DrawSphere(rotatedRootCenter, .5f);
-
-        //Debug.Log(handleVec +", "+ endNodePos);
-        Vector3 newHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter,endNodePos, handleVec);
-        
+        Vector3 newHandlePos = GameManager.GetIntersection(rootCenter, rotatedRootCenter, endNodePos, handleVec);
         
         Gizmos.DrawSphere(newHandlePos, .5f);
-        
+
         Gizmos.color = Color.green;
         Gizmos.DrawLine(endNodePos, handleVec);
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(rootCenter, rotatedRootCenter);
-        
-        /*
-        // endNodeからrootCenterまでの長さ
-        float rootLength =
-            Mathf.Sqrt(Mathf.Pow(endNodePos.x - cusorPos.x, 2) + Mathf.Pow(endNodePos.y - cusorPos.y, 2));
-        float lastHandleLength =
-            Mathf.Sqrt(Mathf.Pow(handleVec.x - endNodePos.x, 2) + Mathf.Pow(handleVec.y - endNodePos.y, 2));
-
-        float cosAngle = (((cusorPos.x - endNodePos.x) * (handleVec.x - endNodePos.x)) + ((cusorPos.y - endNodePos.y) * (handleVec.y - endNodePos.y))) / (rootLength * lastHandleLength);
-        
-        // endNodeからHandleまでの長さ
-        float handleLength = rootLength / cosAngle;
-        
-        Vector3 newHandlePos = new Vector3(handleLength * cosAngle, .1f, handleLength * Mathf.Sin(Mathf.Acos(cosAngle)));
-        
-        Gizmos.DrawLine(endNodePos, newHandlePos);
-        
-        
-        Debug.LogFormat("{0}, {1}",handleLength, cosAngle);
-        */
-        
-        //float newHandlePos = new Vector3();
-        
-        //Gizmos.DrawSphere();
-        
-
     }
+#endif
 }

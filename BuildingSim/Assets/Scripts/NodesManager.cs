@@ -21,12 +21,15 @@ public class NodesManager : MonoBehaviour
             return null;
         }
     }
-    
+
+    #region UnityEvent Method
     private void Awake()
     {
         if (!Instance) Instance = this;
     }
-
+    #endregion
+    
+    #region public Method
     public void MoveSelectNode(Vector3 pos)
     {
         selectNode.Move(pos);
@@ -72,7 +75,7 @@ public class NodesManager : MonoBehaviour
         Nodes[Nodes.Count - 1].OnActive(true);
         
     }
-    
+    #endregion
 }
 
 public class lineInfo

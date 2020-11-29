@@ -10,11 +10,6 @@ public class Node : MonoBehaviour
 {
     public delegate void OnChangePositionDelegate();
     public event OnChangePositionDelegate OnChangePosition;
-    
-    Vector3 temp;
-    private List<lineInfo> _conectLineInfo = new List<lineInfo>();
-    private NodeMeshRenderer _meshRenderer;
-
     public Vector3 position
     {
         get
@@ -30,7 +25,14 @@ public class Node : MonoBehaviour
         get;
         private set;
     }
+    
+    Vector3 temp;
+    private List<lineInfo> _conectLineInfo = new List<lineInfo>();
+    private NodeMeshRenderer _meshRenderer;
+    private List<Vector3> _intersectionVertex = new List<Vector3>();
+    
 
+    #region UnityEvent Method
     private void OnEnable()
     {
         Debug.Log("OnCreatedRoad");
@@ -49,7 +51,9 @@ public class Node : MonoBehaviour
 
         temp = position;
     }
+    #endregion
 
+    #region public Method
     public int AddLine(lineInfo info)
     {
         // Debug.Log(info.position);
@@ -86,6 +90,18 @@ public class Node : MonoBehaviour
         else
             SetIntersection();
     }
+    
+    public void OnActive(bool active)
+    {
+        isActive = active;
+        NodesManager.Instance.OnChangeSelectNode();
+    }
+
+    public void Move(Vector3 pos)
+    {
+        transform.position = pos;
+        // Debug.Log(pos);
+    }
 
     public void OnClick()
     {
@@ -101,7 +117,9 @@ public class Node : MonoBehaviour
         // ハンドルの方向がおかしくなるので、とりあえず初期状態に戻す
         LineCreator.Instance.OnChangeHandlePos();
     }
+    #endregion
 
+    #region private Method
     private void OnMouseEnter()
     {
         Debug.Log("On Over Node!");
@@ -113,21 +131,8 @@ public class Node : MonoBehaviour
         GameManager.Instance.UnFriezeCousorPos();
     }
 
-    public void OnActive(bool active)
-    {
-        isActive = active;
-        NodesManager.Instance.OnChangeSelectNode();
-    }
-
-    public void Move(Vector3 pos)
-    {
-        transform.position = pos;
-        // Debug.Log(pos);
-    }
-
     private void SetWayAngle()
     {
-        // TODO:　モデル差し替えに伴う処理の変更
         GameObject endRoad = transform.GetChild(0).gameObject;
         
         endRoad.SetActive(false);
@@ -141,7 +146,6 @@ public class Node : MonoBehaviour
         var dir = lineInfo.direction;
         endRoad.transform.eulerAngles = Vector3.down * (dir * Mathf.Rad2Deg);
         
-        
         lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
             (lineInfo.lineLength * .5f) + position;
         lineInfo.bone.GetChild(0).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
@@ -153,6 +157,7 @@ public class Node : MonoBehaviour
 
         // 道が続くとき
         endRoad.SetActive(false);
+        // TODO: 曲道の実装
         lineInfo = _conectLineInfo[1];
         lineInfo.bone.GetChild(1).position = new Vector3(Mathf.Cos(dir + (Mathf.PI * .5f)),0,Mathf.Sin(dir + (Mathf.PI * .5f)))*
             (-lineInfo.lineLength * .5f) + position;
@@ -160,7 +165,6 @@ public class Node : MonoBehaviour
             (lineInfo.lineLength * .5f) + position;
     }
     
-    private List<Vector3> _intersectionVertex = new List<Vector3>();
     
     private void SetIntersection()
     {
@@ -250,7 +254,10 @@ public class Node : MonoBehaviour
         }
         _meshRenderer.CreateMesh(_intersectionVertex);
     }
+    #endregion
 
+
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Vector3 pos = position;
@@ -289,4 +296,5 @@ public class Node : MonoBehaviour
         Gizmos.DrawLine(transform.position,pos + transform.position);
 
     }
+#endif
 }

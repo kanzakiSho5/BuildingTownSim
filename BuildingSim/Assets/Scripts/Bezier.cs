@@ -13,9 +13,9 @@ public class Bezier
     private Vector3 start;
     private Vector3 end;
     private Vector3 handle;
-    private int detail = 10;
     private Vector3[] positions;
     
+    public int Detail = 10;
     public float Length => GetLength(rootPositions);
     public Vector3[] Positions
     {
@@ -37,7 +37,7 @@ public class Bezier
         this.start = start;
         this.end = end;
         this.handle = handle;
-        this.detail = detail;
+        this.Detail = detail;
         SetPositions();
     }
 
@@ -59,6 +59,23 @@ public class Bezier
         return BezierPosition(GetTByDistance(t));
     }
 
+    /// <summary>
+    /// 分割したときのハンドル位置
+    /// </summary>
+    /// <param name="startT">0～1までの開始地点</param>
+    /// <param name="endT">0～1までの終了直後</param>
+    /// <returns></returns>
+    public Vector3 SeparateBezierHandlePos(float startT, float endT)
+    {
+        // 開始地点を切り取ったハンドル位置
+        var secHandlePos = Vector3.Lerp(handle, end, startT);
+        var startPos = BezierPosition(this.rootPositions, startT);
+        
+        var secT = ((endT - startT) /(1 - startT));
+        //Debug.LogFormat("secT: {0}",secT);
+        return Vector3.Lerp(startPos, secHandlePos, secT);
+    }
+
     public float ConstantBezierT(float t)
     {
         var tl = Mathf.Lerp(0, Length, t);
@@ -75,10 +92,10 @@ public class Bezier
 
     private void SetPositions()
     {
-        positions = new Vector3[detail];
-        for (int i = 0; i < detail; i++)
+        positions = new Vector3[Detail];
+        for (int i = 0; i < Detail; i++)
         {
-            positions[i] = BezierPosition(i/(float)detail);
+            positions[i] = BezierPosition(i/(float)Detail);
         }
     }
 

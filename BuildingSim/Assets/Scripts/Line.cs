@@ -28,7 +28,7 @@ public class Line : MonoBehaviour
         handlePos = Vector3.Lerp(start.position, end.position, 0.5f);
         startNode.OnChangePosition += OnChangePositionHandler;
         endNode.OnChangePosition += OnChangePositionHandler;
-        lineNodePosition = new Bezier(startNode.position, endNode.position, handlePos, (1 + detail) * 2 + 1);
+        lineNodePosition = new Bezier(startNode.position, endNode.position, handlePos, detail * 2 + 2);
     }
     
     public void SetNode(Node start, Node end, Vector3 handlePos)
@@ -40,7 +40,8 @@ public class Line : MonoBehaviour
         startNode.OnChangePosition += OnChangePositionHandler;
         endNode.OnChangePosition += OnChangePositionHandler;
         
-        lineNodePosition = new Bezier(startNode.position, endNode.position, this.handlePos, (1 + detail) * 2 + 1);
+        lineNodePosition = new Bezier(startNode.position, endNode.position, this.handlePos, detail * 2 + 2);
+        Debug.Log(lineNodePosition.Detail);
     }
     #endregion
 
@@ -52,7 +53,7 @@ public class Line : MonoBehaviour
         // string str = "";
         
         lineNodePosition.SetRoot(startNode.position, endNode.position, handlePos);
-        transform.GetChild(0).position = lineNodePosition.Positions[detail];
+        transform.GetChild(0).position = lineNodePosition.Positions[detail + 1];
         float dir = GetDirection(startNode.position, endNode.position) * Mathf.Rad2Deg;
         transform.GetChild(0).eulerAngles = Vector3.down * dir;
         
@@ -71,7 +72,7 @@ public class Line : MonoBehaviour
             {
                 //startSideRoadBone.eulerAngles += Vector3.up * 90;
                 //endSideRoadBone.eulerAngles += Vector3.down * 90;
-                Debug.LogFormat("startSideRoadBone : {0}, endSideRoadBone :{1}",startSideRoadBone.name, endSideRoadBone.name);
+                //Debug.LogFormat("startSideRoadBone : {0}, endSideRoadBone :{1}",startSideRoadBone.name, endSideRoadBone.name);
                 if(startNodeNumber == null)
                     startNodeNumber = startNode.AddLine(new lineInfo(endSideRoadBone, loadLength));
                 else

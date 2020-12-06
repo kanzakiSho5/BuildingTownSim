@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bezier
 {
-    private Vector3[] rootPositions {
+    public Vector3[] RootPositions {
         get
         {
             return new[] {start, end, handle};
@@ -16,7 +16,7 @@ public class Bezier
     private Vector3[] positions;
     
     public int Detail = 10;
-    public float Length => GetLength(rootPositions);
+    public float Length => GetLength(RootPositions);
     public Vector3[] Positions
     {
         get { return positions; }
@@ -69,7 +69,7 @@ public class Bezier
     {
         // 開始地点を切り取ったハンドル位置
         var secHandlePos = Vector3.Lerp(handle, end, startT);
-        var startPos = BezierPosition(this.rootPositions, startT);
+        var startPos = BezierPosition(this.RootPositions, startT);
         
         var secT = ((endT - startT) /(1 - startT));
         //Debug.LogFormat("secT: {0}",secT);
@@ -84,7 +84,12 @@ public class Bezier
     
     public Vector3 BezierPosition(float t)
     {
-        return BezierPosition(this.rootPositions, t);
+        return BezierPosition(this.RootPositions, t);
+    }
+
+    public Quaternion BezierNormal(float t)
+    {
+        return BezierNormal(RootPositions, t);
     }
     #endregion
 
@@ -102,7 +107,7 @@ public class Bezier
     private float GetTByDistance(float tl)
     {
         var total = 0f;
-        var prev = BezierPosition(rootPositions, 0f);
+        var prev = BezierPosition(RootPositions, 0f);
         var c = Vector3.zero;
         var diff = Vector3.zero;
 
@@ -110,7 +115,7 @@ public class Bezier
 
         for (float t = a; t < 1f; t += a)
         {
-            c = BezierPosition(rootPositions, t);
+            c = BezierPosition(RootPositions, t);
             diff = prev - c;
             total += (float) Mathf.Sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 
@@ -128,7 +133,6 @@ public class Bezier
         return BezierPosition(positions[0], positions[1], positions[2], t);
     }
     
-    
     /// <summary>
     /// 二次ベジェ曲線を取得
     /// </summary>
@@ -142,6 +146,20 @@ public class Bezier
         var startPoint = Vector3.Lerp(start, handle, t);
         var endPoint = Vector3.Lerp(handle, end, t);
         return Vector3.Lerp(startPoint, endPoint, t);
+    }
+
+    private static Quaternion BezierNormal(Vector3[] positions, float t)
+    {
+        return BezierNormal(positions[0], positions[1], positions[2], t);
+    }
+
+    private static Quaternion BezierNormal(Vector3 start, Vector3 end, Vector3 handle, float t)
+    {
+        var startPoint = Vector3.Lerp(start, handle, t);
+        var endPoint = Vector3.Lerp(handle, end, t);
+        var tangent = (endPoint - startPoint).normalized;
+        var vecNormal = new Vector3(-tangent.z, 0, tangent.x);
+        return Quaternion.AngleAxis(Mathf.Atan2(tangent.z, tangent.x) * Mathf.Rad2Deg, Vector3.up);
     }
 
     public static float GetLength(Vector3[] positions)

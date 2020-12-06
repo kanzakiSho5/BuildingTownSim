@@ -12,12 +12,22 @@ public class Line : MonoBehaviour
     private Vector3 handlePos;
 
     private Bezier lineNodePosition;
+    private BuildingCreator buildingCreator;
 
     [Tooltip("道の分割数")] 
     [SerializeField] private int detail = 4;
     
     [Tooltip("道の幅")]
     [SerializeField] private float loadLength = 2;
+
+    #region UnityEvent Method
+
+    private void Awake()
+    {
+        buildingCreator = gameObject.GetComponent<BuildingCreator>();
+    }
+
+    #endregion
 
     #region public Method
     public void SetNode(Node start, Node end)
@@ -87,6 +97,7 @@ public class Line : MonoBehaviour
             startSideRoadBone = startSideRoadBone.GetChild(0);
             endSideRoadBone = endSideRoadBone.GetChild(0);
         }
+        buildingCreator.CreateBuilding(lineNodePosition, loadLength);
         // Debug.Log(str);
     }
 
